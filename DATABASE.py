@@ -6,62 +6,30 @@ class Database:
 
     def create_tables(self):
         with sqlite3.connect(self.path) as conn:
-            conn.execute("""CREATE TABLE IF NOT EXISTS survey_results(
+            conn.execute("""CREATE TABLE IF NOT EXISTS complaints(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
-            age INTEGER,
-            genre TEXT
+            phone_number TEXT,
+            complaint TEXT
             )
             """)
-            conn.execute("""CREATE TABLE IF NOT EXISTS books(
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        name TEXT,
-                        price FLOAT,
-                        cover TEXT,
-                        genre TEXT
-                        )
-                        """)
             conn.commit()
 
     def save_survey(self, data: dict):
         with sqlite3.connect(self.path) as conn:
             conn.execute(
                 """
-                INSERT INTO survey_results (name, age, genre)
+                INSERT INTO complaints (name, phone_number, complaint)
                 VALUES (?, ?, ?)
     
                 """,
-                (data["name"], data["age"], data["genre"])
-
+                (data["name"], data["phone_number"], data["complaint"])
             )
-
-    def save_book(self, data: dict):
-        with sqlite3.connect(self.path) as conn:
-            conn.execute(
-                """
-                INSERT INTO books (name, price, cover, genre)
-                VALUES (?, ?, ?, ?)
-
-                """,
-                (data["name"], data["price"], data["cover"], data["genre"])
-
-            )
-    """с кортежами"""
-    # def get_all_books(self):
-    #     with sqlite3.connect(self.path) as conn:
-    #         result = conn.execute("SELECT * FROM books")
-    #
-    #         return result.fetchall()
 
     """со словарем"""
-    def get_all_books(self):
+    def get_all_complaints(self):
         with sqlite3.connect(self.path) as conn:
-            result = conn.execute("SELECT * FROM books")
+            result = conn.execute("SELECT * FROM complaints")
             result.row_factory = sqlite3.Row
-            # data = result.fetchall()
-            data = result.fetchmany(10)
+            data = result.fetchall()
             return [dict(row) for row in data]
-
-
-
-#######
